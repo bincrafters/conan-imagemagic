@@ -152,7 +152,7 @@ class ImageMagicConan(ConanFile):
         tools.replace_in_file(os.path.join('VisualMagick', 'coders', 'Config.svg.txt'), '\nlibxml', '')
         tools.replace_in_file(os.path.join('VisualMagick', 'coders', 'Config.svg.txt'), '\nlibrsvg', '')
         tools.replace_in_file(os.path.join('VisualMagick', 'coders', 'Config.tiff.txt'), '\ntiff', '')
-        tools.replace_in_file(os.path.join('VisualMagick', 'coders', 'Config.ttf.txt'), '\nttf', '')
+        tools.replace_in_file(os.path.join('VisualMagick', 'coders', 'Config.ttf.txt'), '\nfreetype', '')
         tools.replace_in_file(os.path.join('VisualMagick', 'coders', 'Config.url.txt'), '\nlibxml', '')
         tools.replace_in_file(os.path.join('VisualMagick', 'coders', 'Config.webp.txt'), '\nwebp', '')
 
@@ -196,7 +196,8 @@ class ImageMagicConan(ConanFile):
             if not toolset:
                 toolset = {'12': 'v120',
                            '14': 'v140',
-                           '15': 'v141'}.get(str(self.settings.compiler.version))
+                           '15': 'v141',
+                           '16': 'v142'}.get(str(self.settings.compiler.version))
             tools.replace_in_file('configure.vcxproj',
                                   '<PlatformToolset>v120</PlatformToolset>',
                                   '<PlatformToolset>%s</PlatformToolset>' % toolset)
@@ -214,7 +215,8 @@ class ImageMagicConan(ConanFile):
                             11: '/VS2012',
                             12: '/VS2013',
                             14: '/VS2015',
-                            15: '/VS2017'}.get(int(str(self.settings.compiler.version)))
+                            15: '/VS2017',
+                            16: '/VS2019'}.get(int(str(self.settings.compiler.version)))
             runtime = {'MT': '/smt',
                        'MTd': '/smtd',
                        'MD': '/dmt',
