@@ -29,7 +29,8 @@ class ImageMagicConan(ConanFile):
                "webp": [True, False],
                "xml": [True, False],
                "freetype": [True, False],
-               "utilities": [True, False]}
+               "utilities": [True, False],
+               "with_libjpeg": [False, "libjpeg", "libjpeg-turbo"]}
     default_options = {"shared": False,
                        "fPIC": True,
                        "hdri": True,
@@ -39,11 +40,12 @@ class ImageMagicConan(ConanFile):
                        "lzma": True,
                        "lcms": True,
                        "openexr": True,
-                       "jpeg": True,
+                       "jpeg": False,
                        "openjp2": True,
                        "png": True,
                        "tiff": True,
                        "webp": True,
+                       "with_libjpeg": "libjpeg",
                        "xml": True,
                        "freetype": True,
                        "utilities": True}
@@ -68,6 +70,12 @@ class ImageMagicConan(ConanFile):
     def config_options(self):
         if self.settings.os == 'Windows':
             del self.options.fPIC
+    
+    def configure(self):
+        # Handle deprecated jpeg option
+        if self.options.jpeg:
+            self.output.warn("jpeg option is deprecated, use with_libjpeg option instead.")
+        del self.options.jpeg
 
     def requirements(self):
         if self.options.zlib:
@@ -80,8 +88,11 @@ class ImageMagicConan(ConanFile):
             self.requires('lcms/2.9')
         if self.options.openexr:
             self.requires('openexr/2.3.0')
-        if self.options.jpeg:
-            self.requires('libjpeg/9d')
+        if self.options.with_libjpeg:
+            if self.options.with_libjpeg == "libjpeg-turbo":
+                self.requires('libjpeg-turbo/2.0.5')
+            else:
+                self.requires('libjpeg/9d')
         if self.options.openjp2:
             self.requires('openjpeg/2.3.1')
         if self.options.png:
@@ -271,7 +282,7 @@ class ImageMagicConan(ConanFile):
 
             args.append('--with-lcms=yes' if self.options.lcms else '--with-lcms=no')
             args.append('--with-openexr=yes' if self.options.openexr else '--with-openexr=no')
-            args.append('--with-jpeg=yes' if self.options.jpeg else '--with-jpeg=no')
+            args.append('--with-jpeg=yes' if self.options.with_libjpeg else '--with-jpeg=no')
             args.append('--with-openjp2=yes' if self.options.openjp2 else '--with-openjp2=no')
             args.append('--with-png=yes' if self.options.png else '--with-png=no')
             args.append('--with-tiff=yes' if self.options.tiff else '--with-tiff=no')
